@@ -14,6 +14,21 @@ namespace SaftRoadToHomeDBMS
     public partial class Form1 : Form
     {
         //self defined function
+        string[] sqlScript = new string[14] { @"SELECT Description,Address FROM BadRoad,GPS WHERE BadRoad.Longtitude = GPS.Longtitude AND BadRoad.Latitude = GPS.Latitude AND GPS.City = N'台南市';",
+                                              @"DELETE FROM Message WHERE MessageID = 12; SELECT * FROM Message;",
+                                              @"INSERT INTO Message VALUES(12,N'是在哈囉','2007-05-08 12:35:29.123'); SELECT * FROM Message;",
+                                              @"UPDATE UserInfo SET AccountName = 'keepsleeping' WHERE Email = 'longstay@gmail'; SELECT * FROM UserInfo;",
+                                              @"SELECT * FROM BadRoad WHERE Longtitude IN (SELECT Longtitude FROM GPS WHERE Longtitude < 24);",
+                                              @"SELECT * FROM BadRoad WHERE Longtitude NOT IN (SELECT Longtitude FROM GPS WHERE Longtitude < 24);",
+                                              @"SELECT Email FROM COMMENT WHERE EXISTS (SELECT Email FROM UserInfo WHERE COMMENT.Email = UserInfo.Email AND UserInfo.Age > 30);",
+                                              @"SELECT Email FROM COMMENT WHERE NOT EXISTS (SELECT Email FROM UserInfo WHERE COMMENT.Email = UserInfo.Email AND UserInfo.Age > 30);",
+                                              @"SELECT COUNT(*) FROM BadRoad,UserInfo WHERE UserInfo.Email = BadRoad.Email AND AccountName = 'jameskk';",
+                                              @"SELECT SUM(OfficialLevel) FROM UserInfo,BELONG,Agency WHERE UserInfo.Email = BELONG.Email AND Agency.AgencyID = BELONG.AgencyID;",
+                                              @"SELECT MAX(Date) FROM Message;",
+                                              @"SELECT MIN(Latitude) FROM BadRoad;",
+                                              @"SELECT AVG(Age) FROM UserInfo;",
+                                              @"SELECT OfficialLevel,COUNT(*) FROM UserInfo,BELONG,Agency WHERE UserInfo.Email = BELONG.Email AND Agency.AgencyID = BELONG.AgencyID GROUP BY OfficialLevel HAVING COUNT(*) > 3;",
+                                            };
 
         private void GetData(string selectCommand)
         {
@@ -53,7 +68,23 @@ namespace SaftRoadToHomeDBMS
         private void Form1_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = bindingSource1;
-            GetData("SELECT * FROM UserInfo");
+            comboBox1.SelectedIndex = 0;
         }
+
+        private void queryBtn_Click(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex == 0)
+            {
+                if (!String.IsNullOrEmpty(SQLTextBox.Text)) {
+                    GetData(SQLTextBox.Text);
+                }
+                
+            }
+            else {
+                GetData(sqlScript[comboBox1.SelectedIndex - 1]);
+            }
+
+        }
+
     }
 }
